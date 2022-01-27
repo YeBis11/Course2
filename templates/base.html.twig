@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome, {{ app.user.getName ?? 'Guest' }}{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+{% block body %}
+    <body>
+        {% block header %}
+            <header class="p-3 bg-dark text-white">
+                <div class="container">
+                    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+                        </a>
+
+                        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                            <li>
+                            <a href=""{{ path('index') }}"" class="navbar-brand d-flex align-items-center text-white">
+                            <strong>Site Home</strong>
+                            </a>
+                            </li>
+                        </ul>
+
+
+                        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                            <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+                        </form>
+
+                        <div class="text-end">
+                            {% if app.user %}
+                                <a href="{{ path('user_profile', {id: app.user.getId}) }}" class="btn btn-outline-light me-2">{{ app.user.getName }} profile</a>
+                                <a href="{{ url('app_logout') }}" class="btn btn-warning">Logout</a>
+                            {% else %}
+                                <a href="{{ url('app_login') }}" class="btn btn-outline-light me-2">Login</a>
+                                <a href="{{ url('app_register') }}" class="btn btn-warning">Sign-up</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </header>
+        {% endblock %}
+        {% block flashsucess %}
+            {% for flash in app.flashes('success') %}
+                <div class="alert alert-success">{{ flash }}</div>
+            {% endfor %}
+        {% endblock %}
+        {% block flasherror %}
+            {% for flash in app.flashes('error') %}
+                <div class="alert alert-error">{{ flash }}</div>
+            {% endfor %}
+        {% endblock %}
+        {% block flashinfo %}
+            {% for flash in app.flashes('info') %}
+                <div class="alert alert-info">{{ flash }}</div>
+            {% endfor %}
+        {% endblock %}
+        {% block content %}
+            <main>content</main>
+        {% endblock %}
+        {% block footer %}
+            <footer class="text-muted py-5">
+                <div class="container">
+                    <p class="float-end mb-1">
+                        <a href="#">Back to top</a>
+                    </p>
+                </div>
+            </footer>
+        {% endblock %}
+    </body>
+{% endblock %}
+</html>

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+
+{% block content %}
+    <div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">Collections of {{ app.user.name }}</h2>
+
+        {% for collection in collections %}
+
+            <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+                <div class="col d-flex align-items-start">
+                    <div>
+                        <h2><a href="{{ path('collection_show', {id: user.id, collectionId: collection.id} ) }}"> {{ collection.name }}</a></h2>
+                        <h4>{{ collection.getCategory.getName }}</h4>
+                        <p>
+
+
+                                {{ collection.description | markdown_to_html }}
+
+                        </p>
+                        {% if owner %}
+                            <a href="{{ path('collection_edit', {id: user.id, collectionId: collection.id} ) }}" class="btn btn-primary">
+                                Edit Collection
+                            </a>
+                            <a href="{{ path('item_add' , {id: user.id, collectionId: collection.id})}}" class="btn btn-primary">
+                                Add Item
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                </div>
+    {% else %}
+        <h2>No Collections!</h2>
+        {%  if owner %}
+            <div>Maybe you want to <a href="{{ path('collection_add', {'id': app.user.id}) }}">add one</a></div>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endblock %}
