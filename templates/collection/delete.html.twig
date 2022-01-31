@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Delete item {% endblock %}
+
+{% block content %}
+    <div class="px-4 py-5 my-5 text-center">
+        <h5 class="display-6">Really delete collection {{ collection.name }}?</h5>
+        <div class="col-lg-6 mx-auto">
+            <p>Category of items: {{ collection.category.name }}</p>
+            <p>Consists of {{ collection.items|length }} items</p>
+            <p>
+                Description
+            </p>
+            <p>
+                {{ collection.description ?collection.description|markdown_to_html:'no description' }}
+            </p>
+            <small class="text-muted">added: {{ collection.getCreatedAt|date("d M Y", "Europe/Kiev")}}</small>
+            <p class="mb-4">
+            <form method="post" >
+                <fieldset>
+                    <div class="mb-3">
+                        <label for="agreeDelete" class="form-label text-danger">Do you really agree to delete {{ collection.name }} including its items?</label>
+                        <select id="agreeDelete" class="form-select" name="Delete confirmation">
+                            <option>No, thanks</option>
+                            <option>I agree</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </fieldset>
+            </form>
+            </p>
+
+        </div>
+    </div>
+
+{% endblock %}

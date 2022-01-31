@@ -17,9 +17,9 @@ class CollectionController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if(!($entityManager->getRepository(User::class)->find($id) == $this->getUser()||
+        if (!($entityManager->getRepository(User::class)->find($id) == $this->getUser() ||
             $this->isGranted('ROLE_ADMIN')
-        )){
+        )) {
             return $this->redirectToRoute('collection_show');
         }
         $itemsCollection = new ItemsCollection();
@@ -31,7 +31,7 @@ class CollectionController extends AbstractController
             $entityManager->flush();
             return $this->redirectToRoute('collection_show', [
                 'id' => $this->getUser()->getId(),
-                'collectionId' => $itemsCollection->getId() ]);
+                'collectionId' => $itemsCollection->getId()]);
         }
 
         return $this->renderForm('collection/add.html.twig', [
@@ -40,27 +40,28 @@ class CollectionController extends AbstractController
     }
 
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}', name: 'collection_show')]
-    public function show(Request $request, EntityManagerInterface $entityManager, int $collectionId){
+    public function show(Request $request, EntityManagerInterface $entityManager, int $collectionId)
+    {
         $itemsCollection = $entityManager->find(ItemsCollection::class, $collectionId);
-        if(!$itemsCollection){
+        if (!$itemsCollection) {
             throw $this->createNotFoundException(
                 'There is no collection with id:' . $collectionId
             );
         }
-        return $this->render('collection/show.html.twig',[
+        return $this->render('collection/show.html.twig', [
             'collection' => $itemsCollection,
         ]);
-
 
 
     }
 
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/edit', name: 'collection_edit')]
-    public function edit(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id){
+    public function edit(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id): Response
+    {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if(!($entityManager->getRepository(User::class)->find($collectionId) == $this->getUser()||
+        if (!($entityManager->getRepository(User::class)->find($collectionId) == $this->getUser() ||
             !$this->isGranted('ROLE_ADMIN')
-        )){
+        )) {
             return $this->redirectToRoute('collection_show', ['id' => $id, 'collectionId' => $collectionId]);
         }
 
@@ -72,16 +73,39 @@ class CollectionController extends AbstractController
             $entityManager->flush();
             return $this->redirectToRoute('collection_show', ['id' => $id, 'collectionId' => $collectionId]);
         }
-        return $this->renderForm('collection/edit.html.twig',[
+        return $this->renderForm('collection/edit.html.twig', [
             'CollectionForm' => $form,
             'collection' => $itemsCollection,
         ]);
 
     }
 
+    #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/remove', name: 'collection_remove')]
+    public function delete(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $collection = $entityManager->find('App:ItemsCollection', $collectionId);
+        if(!($this->getUser() == $collection ->getOwner())||!$this->isGranted('ROLE_ADMIN')){
+            //$this->addFlash('error', 'You are not owner of this collection!');
+            $this->redirectToRoute('index');
+        }
+        $agreement = $request->request->get('Delete_confirmation', 'No, Thanks');
+        if(mb_strtolower($agreement) == 'i agree'){
+            $entityManager->remove($collection);
+            $entityManager->flush();
+            return $this->redirectToRoute('user_profile', [
+                'id' => $id,
+            ]);
+
+        }
+        return $this->render('collection/delete.html.twig', [
+            'id' => $id,
+            'collectionId' => $collectionId,
+            'collection' => $collection,
+        ]);
+    }
 
 }
-
 
 
 

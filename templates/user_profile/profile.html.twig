@@ -4,6 +4,15 @@
 
 {% block content%}
     <main>
-        asdflkdasjflk
+        {%  if owner %}
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">User data</h1>
+                <p class="lead text-muted">Nickname: {{ user.name }}</p>
+                <p class="lead text-muted">Email: {{ user.email }}</p>
+                <p>
+                    <a href="{{ path('user_edit') }}" class="btn btn-secondary my-2">Edit profile</a>
+                </p>
+            </div>
+        {% endif %}
     </main>
 {% endblock %}

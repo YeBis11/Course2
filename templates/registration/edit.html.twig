@@ -2,41 +2,54 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Edit credentials{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('app') }}
+{% endblock %}
 
 {% block content%}
     <main>
         {% for flashError in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flashError }}</div>
+            <div class="alert alert-danger" role="alert">{{ flashError }}</div>
         {% endfor %}
-        {{ form_start(registrationForm) }}
         <div class="px-2 py-2 my-2 text-center">
-            <h6 class="display-5 fw-bold">Edit your credentials</h6>
+            <h3 class="display-8 fw-bold">Edit your Credentials</h3>
         </div>
-        <div class="id-3">
-            {{ form_row(registrationForm.username, {
-                label: 'Username',
-                attr: {
-                    placeholder: 'Name'
-                }})
-            }}
-        </div>
-        <div class="id-3">
-            {{ form_row(registrationForm.email, {
-                label: 'Email',
-                attr: {
-                    placeholder: 'Name@example.com'
-                }
-            })
-            }}
-        </div>
-        <div class="id-3">
-            {{ form_row(registrationForm.plainPassword, {
-                label: 'Password'
-            }) }}
-        </div>
-        {{ form_rest(registrationForm) }}
+        <div class="container-md d-flex justify-content-center">
+            {{ form_start(registrationForm, { 'attr': {'class': 'form-signin'} }) }}
 
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Edit Credentials</button>
-        {{ form_end(registrationForm) }}
+            <div class="d-flex align-items-start p-2">
+                <div class="container overflow-hidden">
+                    <div class="row gx-5">
+                        {{ form_row(registrationForm.username, {
+                            label: 'Username',
+                            attr: {
+                                placeholder: 'Name'
+
+                            }})
+                        }}
+
+                        {{ form_row(registrationForm.email, {
+                            label: 'Email',
+                            attr: {
+                                placeholder: 'Name@example.com'
+                            }
+                        })
+                        }}
+
+                    </div></div></div>
+
+            <div class="d-flex align-items-start p-2">
+                <div class="container overflow-hidden">
+                    <div class="row gx-5">
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Password'
+                        }) }}
+
+                        {{ form_rest(registrationForm) }}
+
+                        <button type="submit" class="w-100 btn btn-lg btn-primary">Edit Credentials</button>
+                        {{ form_end(registrationForm) }}
+                    </div></div></div></div>
     </main>
 {% endblock %}

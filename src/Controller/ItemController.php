@@ -19,12 +19,13 @@ class ItemController extends AbstractController
 {
 
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/additem', name: 'item_add')]
-    public function new(Request $request, EntityManagerInterface $entityManager, $collectionId): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, int $collectionId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $parentCollection = $entityManager->find('App:ItemsCollection', $collectionId);
-        if(!$this->getUser() == $parentCollection->getOwner()){
-            dd ('nonon');
+        if(!$this->getUser() == $parentCollection->getOwner()||!$this->isGranted('ROLE_ADMIN')){
+            //$this->addFlash('error', 'You are not owner of this collection!');
+            $this->redirectToRoute('index');
         }
         $item = new Item();
         $item->setParentCollection($parentCollection);
@@ -81,7 +82,60 @@ class ItemController extends AbstractController
 
 
         return $this->renderForm('item/add.html.twig', [
-            'form' => $form,
+            'ItemForm' => $form,
+        ]);
+    }
+    #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/item/{itemId}/edit', name: 'item_edit')]
+    public function edit(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id, int $itemId): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $item = $entityManager->find('App:Item', $itemId);
+        $parentCollection = $item->getParentCollection();
+        if(!($this->getUser() == $parentCollection->getOwner())||!$this->isGranted('ROLE_ADMIN')){
+            //$this->addFlash('error', 'You are not owner of this collection!');
+            $this->redirectToRoute('index');
+        }
+
+        $form = $this->createForm(ItemType::class, $item);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $entityManager->flush();
+
+        }
+
+        return $this->renderForm('item/edit.html.twig', [
+           'ItemForm' => $form,
+            'item' => $item,
+        ]);
+
+    }
+    #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/item/{itemId}/delete', name: 'item_delete')]
+    public function delete(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id, int $itemId): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $item = $entityManager->find('App:Item', $itemId);
+        $parentCollection = $item->getParentCollection();
+        if(!($this->getUser() == $parentCollection->getOwner())||!$this->isGranted('ROLE_ADMIN')){
+            //$this->addFlash('error', 'You are not owner of this collection!');
+            $this->redirectToRoute('index');
+        }
+        $agreement = $request->request->get('Delete_confirmation', 'No, Thanks');
+        if(mb_strtolower($agreement) == 'i agree'){
+            $entityManager->remove($item);
+            $entityManager->flush();
+            return $this->redirectToRoute('collection_show', [
+                'id' => $id,
+                'collectionId' => $collectionId,
+            ]);
+
+        }
+        return $this->render('item/delete.html.twig', [
+            'id' => $id,
+            'collectionId' => $collectionId,
+            'itemId' => $itemId,
+            'item' => $item,
+            'collection' => $parentCollection,
         ]);
     }
 }

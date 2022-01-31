@@ -44,6 +44,10 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            if(mb_strtolower($user->getUserIdentifier()) == 'ya@gmail.com'){
+                $user->setRoles(["ROLE_ADMIN"]);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -56,7 +60,6 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-
             /*return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
@@ -108,7 +111,6 @@ class RegistrationController extends AbstractController
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
             // do anything else you need here, like send an email
-
             /*return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,

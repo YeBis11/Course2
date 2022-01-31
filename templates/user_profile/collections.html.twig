@@ -2,8 +2,9 @@
 
 
 {% block content %}
+
     <div class="container px-4 py-5" id="hanging-icons">
-    <h2 class="pb-2 border-bottom">Collections of {{ app.user.name }}</h2>
+    <h3 class="pb-2 border-bottom">Collections of {{ user.name }}</h3>
 
         {% for collection in collections %}
 
@@ -12,18 +13,23 @@
                     <div>
                         <h2><a href="{{ path('collection_show', {id: user.id, collectionId: collection.id} ) }}"> {{ collection.name }}</a></h2>
                         <h4>{{ collection.getCategory.getName }}</h4>
+                        {%  if collection.description %}
                         <p>
 
 
                                 {{ collection.description | markdown_to_html }}
 
                         </p>
+                        {%  endif %}
                         {% if owner %}
-                            <a href="{{ path('collection_edit', {id: user.id, collectionId: collection.id} ) }}" class="btn btn-primary">
+                            <a href="{{ path('collection_edit', {id: user.id, collectionId: collection.id} ) }}" class="btn btn-sm btn-primary">
                                 Edit Collection
                             </a>
-                            <a href="{{ path('item_add' , {id: user.id, collectionId: collection.id})}}" class="btn btn-primary">
+                            <a href="{{ path('item_add' , {id: user.id, collectionId: collection.id})}}" class="btn btn-sm btn-primary">
                                 Add Item
+                            </a>
+                            <a href="{{ path('collection_remove' , {id: user.id, collectionId: collection.id})}}" class="btn btn-sm btn-primary">
+                                Remove Collection
                             </a>
                         {% endif %}
                     </div>
@@ -37,4 +43,5 @@
         {% endif %}
     {% endfor %}
     </div>
+
 {% endblock %}

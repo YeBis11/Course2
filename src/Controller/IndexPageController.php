@@ -13,6 +13,7 @@ class IndexPageController extends AbstractController
     public function index(ItemRepository $repository): Response
     {
         $user = $this->getUser();
+        //dd($user);
         //$dql = 'SELECT * FROM items';
         $items = $repository->findAll();
         return $this->render('index_page/index.html.twig', [

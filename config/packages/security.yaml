@@ -35,6 +35,7 @@ security:
                 # following line to always enable it.
                 #always_remember_me: true
 
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

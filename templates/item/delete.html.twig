@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Delete item {% endblock %}
+
+{% block content %}
+    <div class="px-4 py-5 my-5 text-center">
+        <h5 class="display-6">Really delete item?</h5>
+        <div class="col-lg-6 mx-auto">
+            <h4>{{ item.name }}</h4>
+            <p>Part of collection: <a href="{{ path('collection_show', {'id': app.user.id, 'collectionId': collection.id}) }}" class="fs-5">{{ collection.name }}</a></p>
+            {% for stringField in item.stringFields %}
+                <p>{{ stringField.name}}: {{ stringField.data }}</p>
+            {% endfor %}
+            {% for numericField in item.numericFields %}
+                <p>{{ numericField.name}}: {{ numericField.data }}</p>
+            {% endfor %}
+            {% for dateField in item.dateFields %}
+                <p>{{ dateField.name}}: {{ dateField.data|date("d/m/Y") }}</p>
+            {% endfor %}
+            {% for textField in item.textFields %}
+            <p>{{ textField.name}}:</p>
+            <div>{{ textField.data|markdown_to_html }}</div>
+            {% endfor %}
+            <p class="mb-4">
+            <form method="post" >
+                <fieldset>
+                    <div class="mb-3">
+                        <label for="agreeDelete" class="form-label">Do you really agree to delete {{ item.name }}?</label>
+                        <select id="agreeDelete" class="form-select" name="Delete confirmation">
+                            <option>No, thanks</option>
+                            <option>I agree</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </fieldset>
+            </form>
+            </p>
+
+        </div>
+    </div>
+
+{% endblock %}

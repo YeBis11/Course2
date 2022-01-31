@@ -3,12 +3,132 @@
 {% block title %}Create new collection{% endblock %}
 
 {% block content %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container-xl d-flex justify-content-center">
+    {{ form_start(CollectionForm) }}
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <div class="row gx-5">
 
-<div class="example-wrapper">
-    {{form(CollectionForm) }}
+                {{ form_row(CollectionForm.name) }}
+                {{ form_row(CollectionForm.Category) }}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <h5 class="row py-4">
+            Custom string item properties:
+            </h5>
+            <div class="d-flex flex-row">
+                <button class="btn btn-sm btn-primary" type="button" id="addString">Add Property</button>
+            </div>
+            <div class="row gx-5" id="stringProperties">
+
+                {{ form_row(CollectionForm.string_property_name_1, { 'label': 'Custom string property #1' }) }}
+                {{ form_row(CollectionForm.string_property_name_2, { 'label': 'Custom string property #2' }) }}
+                {{ form_row(CollectionForm.string_property_name_3, { 'label': 'Custom string property #3' }) }}
+            </div>
+
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <h5 class="row py-4">
+                Custom text item properties:
+            </h5>
+            <div class="d-flex flex-row">
+                <button class="btn btn-sm btn-primary" type="button" id="addText">Add Property</button>
+            </div>
+            <div class="row gx-5" id="textProperties">
+                {{ form_row(CollectionForm.text_property_name_1, { 'label': 'Custom text property name #1' }) }}
+                {{ form_row(CollectionForm.text_property_name_2, { 'label': 'Custom text property name #2' }) }}
+                {{ form_row(CollectionForm.text_property_name_3, { 'label': 'Custom text property name #3' }) }}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <h5 class="row py-4">
+                Custom numeric item properties:
+            </h5>
+            <div class="d-flex flex-row">
+                <button class="btn btn-sm btn-primary" type="button" id="addNumeric">Add Property</button>
+            </div>
+            <div class="row gx-5" id="numericProperties">
+                {{ form_row(CollectionForm.numericPropertyName1, { 'label': 'Custom numeric property name #1' }) }}
+                {{ form_row(CollectionForm.numericPropertyName2, { 'label': 'Custom numeric property name #2' }) }}
+                {{ form_row(CollectionForm.numericPropertyName3, { 'label': 'Custom numeric property name #3' }) }}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <h5 class="row py-4">
+                Custom date item properties:
+            </h5>
+            <div class="d-flex flex-row">
+                <button class="btn btn-sm btn-primary" type="button" id="addDate">Add Property</button>
+            </div>
+            <div class="row gx-5" id="dateProperties">
+                {{ form_row(CollectionForm.datePropertyName1, { 'label': 'Custom date property name #1' }) }}
+                {{ form_row(CollectionForm.datePropertyName2, { 'label': 'Custom date property name #2' }) }}
+                {{ form_row(CollectionForm.datePropertyName3, { 'label': 'Custom date property name #3' }) }}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            <h5 class="row py-4">
+                Custom checkbox item properties:
+            </h5>
+            <div class="d-flex flex-row">
+                <button class="btn btn-sm btn-primary" type="button" id="addBool">Add Property</button>
+            </div>
+            <div class="row gx-5" id="checkboxProperties">
+                {{ form_row(CollectionForm.boolPropertyName1, { 'label': 'Custom checkbox property name #1' }) }}
+                {{ form_row(CollectionForm.boolPropertyName2, { 'label': 'Custom checkbox property name #2' }) }}
+                {{ form_row(CollectionForm.boolPropertyName3, { 'label': 'Custom checkbox property name #3' }) }}
+            </div>
+        </div>
+    </div>
+    <div class="d-flex align-items-start p-2">
+        <div class="container overflow-hidden">
+            {{ form_row(CollectionForm.description, { 'label': 'Collection description(use markdown', 'cols': '100', 'rows': '40' })  }}
+        </div>
+    </div>
+    {{ form_rest(CollectionForm) }}
+    {{ form_end(CollectionForm)}}
 </div>
+    <script>
+        let strings = document.querySelector('#stringProperties').children;
+        let texts = document.querySelector('#textProperties').children;
+        let dates = document.querySelector('#dateProperties').children;
+        let numerics = document.querySelector('#numericProperties').children;
+        let checkboxes = document.querySelector('#checkboxProperties').children;
+        let fields = [strings, texts, dates, numerics, checkboxes];
+        for (let field of fields) {
+            for (let child of field) {
+                child.hidden = true;
+            }
+            field[0].hidden = false;
+        }
+
+        addString.onclick = ()=>processButton(strings);
+        addText.onclick = ()=>processButton(texts);
+        addDate.onclick = ()=>processButton(dates);
+        addBool.onclick = ()=>processButton(checkboxes);
+        addNumeric.onclick = ()=>processButton(numerics);
+
+
+        function processButton(children) {
+            for (let child of children) {
+                console.log(child);
+                if (child.hidden) {
+                    child.hidden = false;
+                    break;
+                }
+            }
+        }
+
+    </script>
 {% endblock %}
