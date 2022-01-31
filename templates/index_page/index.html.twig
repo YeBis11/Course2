@@ -10,7 +10,7 @@
                 {% for item in items %}
                     <div class="col-lg-3">
                         <h4>{{ item.name }}</h4>
-                        <p>Part of collection: <a href="{{ path('collection_show', {'id': item.parentCollection.owner.id, 'collectionId': item.parentCollection.id}) }}" class="fs-5">{{ item.parentCollection.name }}</a></p>
+                        <p>Part of collection: <a href="{{ path('collection_show', {'id': item.parentCollection.owner.id, 'collectionId': item.parentCollection.id}) }}" class="fs-5">{{ item.parentCollection.name }}</a></a> by <a href="{{ path('user_profile', {'id': item.parentCollection.owner.id}) }}">{{ item.parentCollection.owner.getName }}</a></p>
                         {% for stringField in item.stringFields %}
                             <p>{{ stringField.name}}: {{ stringField.data }}</p>
                         {% endfor %}

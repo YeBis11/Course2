@@ -69,6 +69,7 @@ class RegistrationController extends AbstractController
                 'info',
                 'Your registration is almost done! Verify your email!'
             );
+            return $this->redirectToRoute('app_login');
 
         }
 

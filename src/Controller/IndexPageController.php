@@ -12,10 +12,9 @@ class IndexPageController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(ItemRepository $repository): Response
     {
-        $user = $this->getUser();
+           
         $items = $repository->findAll();
         return $this->render('index_page/index.html.twig', [
-            'user' => $user,
             'items' => $items,
         ]);
     }

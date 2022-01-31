@@ -12,7 +12,6 @@
     {% endblock %}
 
     {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
     {% endblock %}
 </head>
 {% block body %}
@@ -31,19 +30,7 @@
                             <strong>Site Home</strong>
                             </a>
                             </li>
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <li>
-                                    <a href="{{ url('index') }}" class="navbar-brand d-flex align-items-center text-muted">
-                                    Admin Panel
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('index') }}" class="navbar-brand d-flex align-items-center text-muted">
-                                    Categories
-                                    </a>
-                                </li>
-
-                            {% endif %}
+             
                             {% if app.user %}
                                 <li><a href="{{ path('user_profile', {id: app.user.id}) }}" class="navbar-brand d-flex align-items-center text-muted">
                                     My Collections
