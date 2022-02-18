@@ -50,11 +50,14 @@
 
                         <div class="text-end">
                             {% if app.user %}
-                                <a href="{{ path('user_edit') }}" class="btn btn-outline-light me-2">{{ app.user.getName }} profile</a>
+                                <a href="{{ path('user_edit', {id:app.user.id}) }}" class="btn btn-outline-light me-2">{{ app.user.getName }} profile</a>
                                 <a href="{{ url('app_logout') }}" class="btn btn-warning">Logout</a>
                             {% else %}
                                 <a href="{{ url('app_login') }}" class="btn btn-outline-light me-2">Login</a>
                                 <a href="{{ url('app_register') }}" class="btn btn-warning">Sign-up</a>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ url('admin_dashboard') }}" class="btn btn-outline-light me-2">Admin Dashboard</a>
                             {% endif %}
                         </div>
                     </div>

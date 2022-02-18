@@ -18,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\HasLifecycleCallbacks()]
 class ItemsCollection
 {
-    use \App\Entity\Timestamps;
+    use Timestamps;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -338,29 +338,29 @@ class ItemsCollection
 
     public function getTextProperties(): ?array
     {
-        return [
+        return array_filter([
             $this->text_property_name_1,
             $this->text_property_name_2,
             $this->text_property_name_3,
-        ];
+        ]);
     }
 
     public function getBoolProperties(): ?array
     {
-        return [
+        return array_filter([
             $this->bool_property_name_1,
             $this->bool_property_name_2,
             $this->bool_property_name_3,
-        ];
+        ]);
     }
 
     public function getNumericProperties(): ?array
     {
-        return [
+        return array_filter([
             $this->numeric_property_name_1,
             $this->numeric_property_name_2,
             $this->numeric_property_name_3,
-        ];
+        ]);
     }
 
     public function getDateProperties(): ?array

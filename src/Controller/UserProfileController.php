@@ -2,14 +2,10 @@
 
 namespace App\Controller;
 
-use App\Form\EditUserType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use function PHPUnit\Framework\throwException;
 use Twig\Extra\Markdown\MarkdownExtension;
 
 class UserProfileController extends AbstractController
@@ -21,7 +17,7 @@ class UserProfileController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user=$entityManager->find('App:User', $id);
         if(!$user){
-            throw new Exception('there is no such user');
+            throw new \PHPUnit\Util\Exception('there is no such user');
         }
         $collections = $user->getItemsCollections();
         $owner = $user == $this->getUser();

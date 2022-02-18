@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use App\Security\LoginAuthAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Util\Exception;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,18 +79,24 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/user/profile/edit', name: 'user_edit')]
+    #[Route('/user/profile/edit/{id<\d+>}', name: 'user_edit')]
 
-    public function edit(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, LoginAuthAuthenticator $authenticator, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, LoginAuthAuthenticator $authenticator, EntityManagerInterface $entityManager, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user=$this->getUser();
+        $user=$entityManager->find('App:User', $id);
+        if(!$user){
+            throw new Exception('there is no such user');
+        }
+
+
+        $this->denyAccessUnlessGranted('USER_EDIT', $user);
 
         $form = $this->createForm(RegistrationFormType::class, $user);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid())
+        {
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -97,32 +104,35 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+            if(!$this->isGranted('ROLE_ADMIN'))
+            {
+                $user->setIsVerified(false);
 
-            $user->setIsVerified(false);
-
+                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                    (new TemplatedEmail())
+                        ->from(new Address('Mailbot@mailtrap.io', 'Mailbot'))
+                        ->to($user->getEmail())
+                        ->subject('Please Confirm your Email')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
+                $this->addFlash(
+                    'info',
+                    'Your edition is almost done! Verify email!'
+                );
+            }
+            else
+            {
+                $this->addFlash(
+                    'info',
+                    'User edition done!'
+                );
+            }
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // generate a signed url and email it to the user
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('Mailbot@mailtrap.io', 'Mailbot'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-            // do anything else you need here, like send an email
-            /*return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );*/
-            $this->addFlash(
-                'info',
-                'Your edition is almost done! Verify your email!'
-            );
+            return $this->redirectToRoute('index');
 
         }
+
 
         return $this->render('registration/edit.html.twig', [
             'registrationForm' => $form->createView(),

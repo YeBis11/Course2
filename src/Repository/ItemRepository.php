@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+
 
 /**
  * @method Item|null find($id, $lockMode = null, $lockVersion = null)
@@ -35,6 +37,42 @@ class ItemRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAllHydrated(): ?Array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT i, c, sf, tf, nf,  df, o, cc
+            FROM App\Entity\Item i
+            JOIN i.parent_collection c
+            JOIN i.stringFields sf
+            JOIN i.textFields tf
+            JOIN i.numericFields nf
+            JOIN i.dateFields df
+            JOIN c.owner o
+            JOIN c.Category cc
+            order by i.createdAt'
+        );
+        return $query->getResult();
+    }
+
+    public function findAllHydratedQuery(): ?Query
+    {
+        $entityManager = $this->getEntityManager();
+
+        return $entityManager->createQuery(
+            'SELECT i, c, sf, tf, nf,  df, o, cc
+            FROM App\Entity\Item i
+            JOIN i.parent_collection c
+            JOIN i.stringFields sf
+            JOIN i.textFields tf
+            JOIN i.numericFields nf
+            JOIN i.dateFields df
+            JOIN c.owner o
+            JOIN c.Category cc'
+        );
+    }
 
     /*
     public function findOneBySomeField($value): ?Item

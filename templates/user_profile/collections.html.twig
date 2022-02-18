@@ -21,7 +21,7 @@
 
                         </p>
                         {%  endif %}
-                        {% if owner %}
+                        {% if app.user == collection.owner or is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('collection_edit', {id: user.id, collectionId: collection.id} ) }}" class="btn btn-sm btn-primary">
                                 Edit Collection
                             </a>
@@ -38,7 +38,7 @@
                 </div>
     {% else %}
         <h2>No Collections!</h2>
-        {%  if owner %}
+        {%  if owner or is_granted('ROLE_ADMIN') %}
             <div>Maybe you want to <a href="{{ path('collection_add', {'id': app.user.id}) }}">add one</a></div>
         {% endif %}
     {% endfor %}

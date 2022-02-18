@@ -16,21 +16,19 @@ class CollectionController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/add', name: 'collection_add')]
     public function new(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if (!($entityManager->getRepository(User::class)->find($id) == $this->getUser() ||
-            $this->isGranted('ROLE_ADMIN')
-        )) {
-            return $this->redirectToRoute('collection_show');
-        }
         $itemsCollection = new ItemsCollection();
-        $itemsCollection->setOwner($this->getUser());
+
+        $itemsCollection->setOwner($entityManager->find('App:User', $id));
+
+        $this->denyAccessUnlessGranted('COLLECTION_EDIT', $itemsCollection);
+
         $form = $this->createForm(ItemsCollectionType::class, $itemsCollection);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($itemsCollection);
             $entityManager->flush();
             return $this->redirectToRoute('collection_show', [
-                'id' => $this->getUser()->getId(),
+                'id' => $id,
                 'collectionId' => $itemsCollection->getId()]);
         }
 
@@ -58,14 +56,21 @@ class CollectionController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/edit', name: 'collection_edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        if (!($entityManager->getRepository(User::class)->find($collectionId) == $this->getUser() ||
-            !$this->isGranted('ROLE_ADMIN')
-        )) {
-            return $this->redirectToRoute('collection_show', ['id' => $id, 'collectionId' => $collectionId]);
-        }
 
         $itemsCollection = $entityManager->find(ItemsCollection::class, $collectionId);
+
+
+        if (!$itemsCollection) {
+            throw $this->createNotFoundException(
+                'There is no collection with id:' . $collectionId
+            );
+        }
+
+        $this->denyAccessUnlessGranted('COLLECTION_EDIT', $itemsCollection);
+
+
+
+
         $form = $this->createForm(ItemsCollectionType::class, $itemsCollection);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -83,15 +88,12 @@ class CollectionController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/remove', name: 'collection_remove')]
     public function delete(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $collection = $entityManager->find('App:ItemsCollection', $collectionId);
-        if(!($this->getUser() == $collection ->getOwner())||!$this->isGranted('ROLE_ADMIN')){
-            //$this->addFlash('error', 'You are not owner of this collection!');
-            $this->redirectToRoute('index');
-        }
+        $itemsCollection = $entityManager->find('App:ItemsCollection', $collectionId);
+        $this->denyAccessUnlessGranted('COLLECTION_EDIT', $itemsCollection);
+
         $agreement = $request->request->get('Delete_confirmation', 'No, Thanks');
         if(mb_strtolower($agreement) == 'i agree'){
-            $entityManager->remove($collection);
+            $entityManager->remove($itemsCollection);
             $entityManager->flush();
             return $this->redirectToRoute('user_profile', [
                 'id' => $id,
@@ -101,7 +103,7 @@ class CollectionController extends AbstractController
         return $this->render('collection/delete.html.twig', [
             'id' => $id,
             'collectionId' => $collectionId,
-            'collection' => $collection,
+            'collection' => $itemsCollection,
         ]);
     }
 

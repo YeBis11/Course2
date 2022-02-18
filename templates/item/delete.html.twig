@@ -7,7 +7,7 @@
         <h5 class="display-6">Really delete item?</h5>
         <div class="col-lg-6 mx-auto">
             <h4>{{ item.name }}</h4>
-            <p>Part of collection: <a href="{{ path('collection_show', {'id': app.user.id, 'collectionId': collection.id}) }}" class="fs-5">{{ collection.name }}</a></p>
+            <p>Part of collection: <a href="{{ path('collection_show', {'id': item.parentCollection.owner.id, 'collectionId': item.parentCollection.id}) }}" class="fs-5">{{ collection.name }}</a></p>
             {% for stringField in item.stringFields %}
                 <p>{{ stringField.name}}: {{ stringField.data }}</p>
             {% endfor %}

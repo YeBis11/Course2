@@ -21,14 +21,11 @@ class ItemController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/additem', name: 'item_add')]
     public function new(Request $request, EntityManagerInterface $entityManager, int $collectionId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $parentCollection = $entityManager->find('App:ItemsCollection', $collectionId);
-        if(!$this->getUser() == $parentCollection->getOwner()||!$this->isGranted('ROLE_ADMIN')){
-            //$this->addFlash('error', 'You are not owner of this collection!');
-            $this->redirectToRoute('index');
-        }
         $item = new Item();
+        $parentCollection = $entityManager->find('App:ItemsCollection', $collectionId);
         $item->setParentCollection($parentCollection);
+
+        $this->denyAccessUnlessGranted('ITEM_EDIT', $item);
 
         foreach($parentCollection->getStringProperties() as $stringfieldname){
             if($stringfieldname){
@@ -88,13 +85,8 @@ class ItemController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/item/{itemId}/edit', name: 'item_edit')]
     public function edit(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id, int $itemId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $item = $entityManager->find('App:Item', $itemId);
-        $parentCollection = $item->getParentCollection();
-        if(!($this->getUser() == $parentCollection->getOwner())||!$this->isGranted('ROLE_ADMIN')){
-            //$this->addFlash('error', 'You are not owner of this collection!');
-            $this->redirectToRoute('index');
-        }
+        $this->denyAccessUnlessGranted('ITEM_EDIT', $item);
 
         $form = $this->createForm(ItemType::class, $item);
         $form->handleRequest($request);
@@ -113,13 +105,8 @@ class ItemController extends AbstractController
     #[Route('/user/{id<\d+>}/collection/{collectionId<\d+>}/item/{itemId}/delete', name: 'item_delete')]
     public function delete(Request $request, EntityManagerInterface $entityManager, int $collectionId, int $id, int $itemId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $item = $entityManager->find('App:Item', $itemId);
-        $parentCollection = $item->getParentCollection();
-        if(!($this->getUser() == $parentCollection->getOwner())||!$this->isGranted('ROLE_ADMIN')){
-            //$this->addFlash('error', 'You are not owner of this collection!');
-            $this->redirectToRoute('index');
-        }
+        $this->denyAccessUnlessGranted('ITEM_EDIT', $item);
         $agreement = $request->request->get('Delete_confirmation', 'No, Thanks');
         if(mb_strtolower($agreement) == 'i agree'){
             $entityManager->remove($item);
@@ -135,7 +122,6 @@ class ItemController extends AbstractController
             'collectionId' => $collectionId,
             'itemId' => $itemId,
             'item' => $item,
-            'collection' => $parentCollection,
         ]);
     }
 }
