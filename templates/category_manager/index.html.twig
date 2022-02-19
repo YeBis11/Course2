@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Edit</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for category in categories %}
+            <tr class="table-light">
+                <th>{{ category.id }}</th>
+                <td>{{ category.name }}</td>
+                <td><a href="{{ path('category_edit', {id: category.id}) }}" class="btn btn-primary">Edit Category</a></td>
+            </tr>
+
+        {% else %}
+            <h2> There are no categories yet.</h2>
+        {% endfor%}
+        </tbody>
+    </table>
+    <button class="btn btn-info" id="addCategoryButton">Add Category</button>
+    <div id="categoryForm" >
+        <div class="d-flex flex-row">
+            {{ form_start(addCategoryForm) }}
+            <div class="p-2">
+                {{ form_row(addCategoryForm.name, { 'label': 'Category Name' }) }}
+                <button type="submit" class="btn btn-primary">Add Category</button>
+            </div>
+            <div class="p-2">
+
+            </div>
+            {{ form_rest(addCategoryForm) }}
+        </div>
+    </div>
+    <script>
+        let categoryForm = document.querySelector('#categoryForm');
+        categoryForm.hidden = true;
+        let addButton = document.querySelector('#addCategoryButton');
+        console.log(addButton);
+        addButton.onclick = function (){
+            categoryForm.hidden = !categoryForm.hidden;
+        };
+    </script>
+{% endblock %}

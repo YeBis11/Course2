@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Email Verified</th>
+            <th scope="col">Register Date</th>
+            <th scope="col">Modified Date</th>
+            <th scope="col">Credentials Page</th>
+            <th scope="col">Collections</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr class="table-light">
+            <th>{{ user.id }}</th>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email|lower }}</td>
+            <td>{% if user.isVerified == true %}
+                    Verified
+                {% else %}
+                    Not verified
+                {% endif %}
+            </td>
+            <td>{{ user.createdAt|date("d M Y", "Europe/Kiev") }}</td>
+            <td>{{ user.updatedAt|date("d M Y", "Europe/Kiev") }}</td>
+            <td><a href="{{ path('user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">User Credentials</a></td>
+            <td><a href="{{ path('user_profile', {'id': user.id}) }}" class="btn btn-sm btn-outline-dark">User Collections</a></td>
+
+            </tr>
+
+        {% else %}
+            <h2> There are no participants in the list</h2>
+        {% endfor%}
+        </tbody>
+    </table>
+{% endblock %}

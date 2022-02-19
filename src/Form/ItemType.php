@@ -37,7 +37,7 @@ class ItemType extends AbstractType
                 'entry_type' => DateFieldType::class,
                 'entry_options' => ['label' => false],
                 'label' => false,
-                'required' => false,
+                'required' => true,
             ])
             ->add('numericFields', CollectionType::class, [
                 'entry_type' => NumericFieldType::class,

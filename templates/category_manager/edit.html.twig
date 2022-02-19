@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+    {{ form_start(categoryForm) }}
+    {{ form_row(categoryForm.name, { 'label': 'Category Name' }) }}
+    <button type="submit" class="btn btn-primary">Edit Category</button>
+    {{ form_rest(categoryForm) }}
+{% endblock %}

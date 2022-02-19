@@ -7,6 +7,7 @@ use App\Entity\ItemsCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -36,7 +37,11 @@ class ItemsCollectionType extends AbstractType
             ->add('boolPropertyName1')
             ->add('boolPropertyName2')
             ->add('boolPropertyName3')
-            ->add('description')
+            ->add('description', TextareaType::class, [
+
+                    'required' => true,
+
+            ])
             ->add('save', SubmitType::class)
         ;
     }

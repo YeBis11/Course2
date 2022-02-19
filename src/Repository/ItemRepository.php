@@ -43,13 +43,9 @@ class ItemRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery(
-            'SELECT i, c, sf, tf, nf,  df, o, cc
+            'SELECT i, c, o, cc
             FROM App\Entity\Item i
-            JOIN i.parent_collection c
-            JOIN i.stringFields sf
-            JOIN i.textFields tf
-            JOIN i.numericFields nf
-            JOIN i.dateFields df
+            JOIN i.parent_collection c  
             JOIN c.owner o
             JOIN c.Category cc
             order by i.createdAt'
@@ -62,13 +58,10 @@ class ItemRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         return $entityManager->createQuery(
-            'SELECT i, c, sf, tf, nf,  df, o, cc
+            'SELECT i, c, o, cc
             FROM App\Entity\Item i
             JOIN i.parent_collection c
-            JOIN i.stringFields sf
-            JOIN i.textFields tf
-            JOIN i.numericFields nf
-            JOIN i.dateFields df
+      
             JOIN c.owner o
             JOIN c.Category cc'
         );

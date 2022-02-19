@@ -15,12 +15,12 @@ class IndexPageController extends AbstractController
     public function index(ItemRepository $repository, PaginatorInterface $paginator, Request $request): Response
     {
 
-        //$query = $repository->findAllHydratedQuery();
-        /*$pagination = $paginator->paginate(
+        $query = $repository->findAllHydratedQuery();
+        $pagination = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
             10
-        );*/
+        );
         //dd($pagination);
         $items = $repository->findAllHydrated();
         //dd($items);
